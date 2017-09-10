@@ -1,0 +1,19 @@
+{
+  "name": "rects",
+  "version": "1.0.0",
+  "description": "\"2D WebGL renderer\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benwest/rects.git"
+  },
+  "author": "Ben West",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benwest/rects/issues"
+  },
+  "homepage": "https://github.com/benwest/rects#readme"
+}
