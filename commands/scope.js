@@ -23,6 +23,15 @@ var intersect = ( a, b ) => {
     a = boxToMinMax( a );
     b = boxToMinMax( b );
     
+    if (
+        b.min[ 0 ] > a.max[ 0 ] ||
+        b.max[ 0 ] < a.min[ 0 ] ||
+        b.min[ 1 ] > a.max[ 1 ] ||
+        b.max[ 1 ] < a.min[ 1 ]
+    ) {
+        return { position: [ 0, 0 ], size: [ 0, 0 ] };
+    }
+    
     return minMaxToBox({
         min: [
             Math.max( a.min[ 0 ], b.min[ 0 ] ),
@@ -30,7 +39,7 @@ var intersect = ( a, b ) => {
         ],
         max: [
             Math.min( a.max[ 0 ], b.max[ 0 ] ),
-            Math.max( a.max[ 1 ], b.max[ 1 ] )
+            Math.min( a.max[ 1 ], b.max[ 1 ] )
         ]
     });
     
@@ -58,11 +67,15 @@ module.exports = regl => regl({
                 size: canvasSize( ctx )
             }
             
-            var next = props.clip;
+            if ( !props.clip ) return prev;
             
-            if ( !next ) return prev;
-            
-            if ( next === true ) next = { position: props.position, size: props.size };
+            var next = {
+                position: [
+                    ctx.position[ 0 ] + props.position[ 0 ],
+                    ctx.position[ 1 ] + props.position[ 1 ]
+                ],
+                size: props.size
+            };
             
             return intersect( prev, next );
             
@@ -71,10 +84,11 @@ module.exports = regl => regl({
         position: ( ctx, props ) => {
             
             var prev = ctx.position || [ 0, 0 ];
+            var next = props.position || [ 0, 0 ];
             
             return [
-                prev[ 0 ] + props.position[ 0 ],
-                prev[ 1 ] + props.position[ 1 ]
+                prev[ 0 ] + next[ 0 ],
+                prev[ 1 ] + next[ 1 ]
             ]
             
         }
@@ -142,9 +156,11 @@ module.exports = regl => regl({
         
         box: ctx => {
             
+            var yInv = ctx.canvasSize[ 1 ] - ctx.clip.position[ 1 ] - ctx.clip.size[ 1 ];
+            
             return {
                 x: ctx.clip.position[ 0 ] * ctx.pixelRatio,
-                y: ctx.clip.position[ 1 ] * ctx.pixelRatio,
+                y: yInv * ctx.pixelRatio,
                 width: ctx.clip.size[ 0 ] * ctx.pixelRatio,
                 height: ctx.clip.size[ 1 ] * ctx.pixelRatio
             }

@@ -2,7 +2,6 @@ var createRenderer = require('./renderer');
 var draw = require('./draw');
 
 var defaults = {
-    resize: true,
     pixelRatio: window.devicePixelRatio || 1
 }
 
@@ -18,6 +17,9 @@ module.exports = ( dom, root, options = {} ) => {
             
             canvas = document.createElement( 'canvas' );
             
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            
             dom.appendChild( canvas );
             
         } else {
@@ -32,28 +34,21 @@ module.exports = ( dom, root, options = {} ) => {
     
     var renderer = dom.__rect;
     
-    if ( renderer.options.resize ) {
-        
-        var { width, height } = dom.getBoundingClientRect();
-        
-        var { canvas, pixelRatio } = renderer.options;
-        
-        if (
-            canvas.width !== width * pixelRatio ||
-            canvas.height !== height * pixelRatio
-        ) {
-            canvas.width = width * pixelRatio;
-            canvas.height = height * pixelRatio;
-        }
-        
+    var { canvas, pixelRatio } = renderer.options;
+    
+    var rect = dom.getBoundingClientRect();
+    
+    var width = rect.width * pixelRatio;
+    var height = rect.height * pixelRatio;
+    
+    if (
+        canvas.width !== width ||
+        canvas.height !== height
+    ) {
+        canvas.width = width;
+        canvas.height = height;
     }
     
-    renderer.regl.clear({
-        color: [ 0, 0, 0, 0 ],
-        depth: 1,
-        stencil: 0
-    });
-    
-    renderer.regl.draw( () => draw( renderer, root ) );
+    draw( renderer, root );
     
 }

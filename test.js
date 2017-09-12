@@ -1,20 +1,17 @@
-var regl = require("regl")()
+var rect = require('./index');
 
-debugger;
-regl.frame( c => console.log( c.drawingBufferWidth ));
-// var rect = require('./index');
+var texture = 'http://brody-cms.bong.international/assets/content/_phone/BA.Web.TestStories.Channel4.Image.21.jpg';
 
-// debugger;
-
-// var scene = () => {
+var scene = () => {
     
-//     return rect( { position: [ 100, 100 ], size: [ 100, 100 ], color: [ 0, 0, 1 ], clip: true },
-//         rect( { position: [ 20, 20 ], size: [ 150, 20 ], color: [ 1, 0, 0 ] } )
-//     )
+    return rect( { position: [ 100, 100 ], size: [ 100, 100 ], color: [ 0, 0, 1 ] },
+        rect( { position: [ 20, 20 ], size: [ 300, 1000 ], texture } )
+    )
     
-// }
+}
 
-// rect.render( document.body, scene() );
+var render = () => rect.render( document.body, scene() );
 
-// // var rect = require('./index');
+window.addEventListener('resize', render);
 
+render();
